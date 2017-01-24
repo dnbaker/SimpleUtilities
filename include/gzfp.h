@@ -109,6 +109,7 @@ public:
         linesz_(is_write_ ? 0: linesz),
         buf_((char *)malloc(linesz))
     {
+        fprintf(stderr, "Opened!\n");
     }
     GZFP(FILE *fp, const char *mode, int linesz=2048): GZFP(fileno(fp), mode, linesz)
     {
