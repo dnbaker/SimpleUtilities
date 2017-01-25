@@ -1,4 +1,4 @@
-.PHONY=all clean
+.PHONY=all clean mostlyclean
 CXX=g++
 CC=gcc
 WARNINGS=-Wall -Wextra -Wno-char-subscripts \
@@ -17,6 +17,12 @@ CXXFLAGS=$(OPT) -std=c++11 $(WARNINGS)
 LIB=-lz -pthread
 LD=-L.
 INCLUDE=-I.
+
+all: tab6 zhead
+
+tab6: src/tab6.cpp
+	$(CXX) $(CXXFLAGS) $(INCLUDE) $(LD) $< -o $@ $(LIB)
+
 
 zhead: src/zhead.cpp
 	$(CXX) $(CXXFLAGS) $(INCLUDE) $(LD) $< -o $@ $(LIB)
