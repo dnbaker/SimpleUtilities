@@ -48,7 +48,7 @@ public:
         buf_(other.buf_)
     {}
     void set_bufsz(unsigned bufsz) {
-#if ZLIB_VERNUM < 0x1260
+#if ZLIB_VERNUM < 0x1240
         std::fprintf(stderr, "Warning: gzbuffer added in zlib1.2.4. Unable to change "
                              "buffer size from default of 8192.\n");
 #else
