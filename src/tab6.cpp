@@ -11,7 +11,7 @@ KSEQ_INIT(gzFile, gzread)
         kputsn(suf, sizeof(suf), &kseq->name);\
     } while(0)
 
-int streaming_main(char *outpath) {
+int stream_process(char *outpath) {
     FILE *out(outpath ? fopen(outpath, "w"): stdout);
     gzFile in(gzdopen(STDIN_FILENO, "rb"));
     kseq_t *ks(kseq_init(in));
@@ -30,6 +30,7 @@ int streaming_main(char *outpath) {
         if(kseq_read(ks) < 0) {
             std::fprintf(stderr, "Uneven number of reads.\n");
             code = EXIT_FAILURE;
+            break;
         }
         __add_if_abs(ks, "/2");
         kputsn(ks->name.s, ks->name.l, &s);
@@ -59,7 +60,7 @@ int main(int argc, char *argv[])
             case 's': streaming = 1; break;
         }
     }
-    if(streaming) return streaming_main(outpath);
+    if(streaming) return stream_process(outpath);
     if(argc - optind < 2) {
         usage:
         std::fprintf(stderr,"Function: Converts paired-end sequencing data into tab6 format for consumption by bowtie2\n" 
