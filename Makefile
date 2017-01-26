@@ -1,4 +1,4 @@
-.PHONY=all clean
+.PHONY=all clean mostlyclean
 CXX=g++
 CC=gcc
 WARNINGS=-Wall -Wextra -Wno-char-subscripts \
@@ -13,16 +13,21 @@ OS:=$(shell uname)
 ifeq ($(OS),Darwin)
     OPT := $(OPT) -Wa,-q
 endif
-CXXFLAGS=$(OPT)-std=c++14 $(WARNINGS)
+CXXFLAGS=$(OPT) -std=c++11 $(WARNINGS)
 LIB=-lz -pthread
 LD=-L.
 INCLUDE=-I.
 
-zhead: src/zhead.cpp
+EX=$(notdir $(patsubst %.cpp,%,$(wildcard src/*.cpp)))
+OBJ=
+
+all: $(EX)
+
+%: src/%.cpp
 	$(CXX) $(CXXFLAGS) $(INCLUDE) $(LD) $< -o $@ $(LIB)
 
 clean:
-	rm -f src/zhead.o
+	rm -f $(OBJ) $(EX) || echo "EX is $(EX)" 
 	&& cd hll && make clean && cd ..
 
 mostlyclean: clean

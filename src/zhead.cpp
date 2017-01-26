@@ -26,11 +26,13 @@ int main(int argc, char *argv[]) {
             break; // Do nothing
         default: zhead_usage(*argv); return EXIT_FAILURE;
     }
-    char *line;
-    gzfp::GZFP fp(argc - optind ? argv[optind]: "-");
+
+    gzfp::GZFP fp(argc - optind ? argv[optind]: "-"); // Open handles.
     FILE *ofp(outpath?fopen(outpath, "w"):stdout);
-    while(skip-- && (line = fp.next()));
-    if(line) while(n-- && (line = fp.next())) fputs(line, ofp);
-    if(ofp != stdout) fclose(ofp);
+    char *line;
+
+    while(skip-- && (line = fp.next())); // Skip lines
+    if(line) while(n-- && (line = fp.next())) fputs(line, ofp); // Read the number desired.
+    if(ofp != stdout) fclose(ofp); // Clean up
     return EXIT_SUCCESS;
 }

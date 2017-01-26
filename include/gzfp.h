@@ -48,9 +48,9 @@ public:
         buf_(other.buf_)
     {}
     void set_bufsz(unsigned bufsz) {
-#if ZLIB_VERNUM < 0x1260
+#if ZLIB_VERNUM < 0x1240
         std::fprintf(stderr, "Warning: gzbuffer added in zlib1.2.4. Unable to change "
-                        "buffer size from default of 8192.\n");
+                             "buffer size from default of 8192.\n");
 #else
         gzbuffer(fp_, bufsz);
 #endif
@@ -84,9 +84,12 @@ public:
 #if !NDEBUG
         const char *original_str(s);
 #endif
-        for(;*s;++s) switch(*s) {case 'r': case 'T': return 0;
-                                 case '0': case '1': case '2': case '3': case '4': case '5': case '6': case '7': case '8':
-                                 case '9': return *s - '0';}
+        for(;*s;++s) {
+            switch(*s) {
+                case 'r': case 'T': return 0;
+                default: if(*s >= '0' && *s <= '9') return *s - '0';
+            }
+        }
 #if !NDEBUG
         std::fprintf(stderr, "Could not infer compression mode from mode string '%s'.\n", original_str);
 #endif
@@ -109,7 +112,6 @@ public:
         linesz_(is_write_ ? 0: linesz),
         buf_((char *)malloc(linesz))
     {
-        fprintf(stderr, "Opened!\n");
     }
     GZFP(FILE *fp, const char *mode, int linesz=2048): GZFP(fileno(fp), mode, linesz)
     {
