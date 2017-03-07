@@ -2,8 +2,8 @@
 #include <cstdint>
 #include <cinttypes>
 
-#include "include/kseq.h"
-#include "include/kstring.h"
+#include "klib/kseq.h"
+#include "klib/kstring.h"
 KSEQ_INIT(gzFile, gzread)
 
 #define LOG_EXIT(...) do {\

@@ -1,8 +1,8 @@
 #include <zlib.h>
 #include <cstdio>
 #include <cstdio>
-#include "include/kstring.h"
-#include "include/kseq.h"
+#include "klib/kstring.h"
+#include "klib/kseq.h"
 
 KSEQ_INIT(gzFile, gzread)
 #define __add_if_abs(kseq, suf) \

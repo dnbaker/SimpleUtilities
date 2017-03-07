@@ -13,18 +13,19 @@ OS:=$(shell uname)
 ifeq ($(OS),Darwin)
     OPT := $(OPT) -Wa,-q
 endif
+CFLAGS=$(OPT) $(WARNINGS)
 CXXFLAGS=$(OPT) -std=c++14 $(WARNINGS)
 LIB=-lz -pthread
 LD=-L.
-INCLUDE=-I.
+INCLUDE=-I. -Iklib -Iinclude
 
 EX=$(notdir $(patsubst %.cpp,%,$(wildcard src/*.cpp)))
-OBJ=
+OBJ=klib/kstring.o
 
 all: $(EX)
 
-%: src/%.cpp
-	$(CXX) $(CXXFLAGS) $(INCLUDE) $(LD) $< -o $@ $(LIB)
+%: src/%.cpp klib/kstring.o
+	$(CXX) $(CXXFLAGS) $(INCLUDE) $(LD) klib/kstring.o $< -o $@ $(LIB)
 
 clean:
 	rm -f $(OBJ) $(EX) || echo "EX is $(EX)" 
