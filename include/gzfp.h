@@ -96,8 +96,8 @@ public:
         buf_(0)
     {
     }
-    GZFP(int fd, const char *mode, int linesz=2048): //File descriptor constructor.
-        fp_(gzdopen(fd, mode)),
+    GZFP(gzFile fp, const char *mode, int linesz=2048):
+        fp_(fp),
         linelen_(0L),
         is_write_(strchr(mode, 'w')),
         level_(infer_level(mode)),
@@ -105,18 +105,9 @@ public:
         buf_((char *)malloc(linesz))
     {
     }
-    GZFP(FILE *fp, const char *mode, int linesz=2048): GZFP(fileno(fp), mode, linesz)
-    {
-    }
-    GZFP(const char *path, const char *mode, int linesz=2048):
-        fp_(open_gzfile(path, mode)),
-        linelen_(0L),
-        is_write_(strchr(mode, 'w')),
-        level_(infer_level(mode)),
-        linesz_(is_write_ ? 0: linesz),
-        buf_((char *)malloc(linesz))
-    {
-    }
+    GZFP(const char *path, const char *mode, int linesz=2048): GZFP(open_gzfile(path, mode), mode, linesz) {} // File path
+    GZFP(int fd, const char *mode, int linesz=2048): GZFP(gzdopen(fd, mode), mode, linesz) {} // File descriptor
+    GZFP(FILE *fp, const char *mode, int linesz=2048): GZFP(fileno(fp), mode, linesz) {}      // File pointer
     GZFP(const char *path): GZFP(path, "r") {}
     ~GZFP() {
         if(fp_) gzclose(fp_);

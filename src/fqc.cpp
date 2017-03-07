@@ -1,11 +1,13 @@
 #include <zlib.h>
 #include <cstdint>
+#include <cinttypes>
 
 #include "include/kseq.h"
 #include "include/kstring.h"
 KSEQ_INIT(gzFile, gzread)
 
 #define LOG_EXIT(...) do {\
+        fprintf(stderr, "[E: %s:%d", __func__, __LINE__);\
         fprintf(stderr, ##__VA_ARGS__); exit(1); \
     } while(0) 
 
@@ -18,10 +20,10 @@ int main(int argc, char **argv)
         gzFile in(gzopen(argv[i], "r"));
         if(in == nullptr) LOG_EXIT("Could not open file %s.\n", argv[1]);
         kseq_t *seq(kseq_init(in));
-        if(seq == nullptr) LOG_EXIT("Could not open file %s as fastq.\n", argv[2]);
+        if(seq == nullptr) LOG_EXIT("Could not open file %s as fastq.\n", argv[1]);
         std::uint64_t c(0);
         while(kseq_read(seq) >= 0) ++c;
-        fprintf(stdout, "%s\t%lu\n", argv[i], c);
+        fprintf(stdout, "%s\t%" PRIu64 "\n", argv[i], c);
         kseq_destroy(seq);
         gzclose(in);
     }
