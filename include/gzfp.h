@@ -6,6 +6,7 @@
 #include <cstdio>
 #include <cstdlib>
 #include <cstring>
+#include <memory>
 #include <zlib.h>
 
 #define __gzstream_open(fname, mode) \
@@ -35,18 +36,17 @@ struct GZFP {
     gzFile fp_;
 public:
     ssize_t linelen_;
-    const bool is_write_;
-    const std::uint8_t level_;
+    bool is_write_;
+    std::uint8_t level_;
     int linesz_;
-    char *buf_;
-    GZFP(GZFP &other):
-        fp_(other.fp_),
-        linelen_(other.linelen_),
-        is_write_(other.is_write_),
-        level_(other.level_),
-        linesz_(other.linesz_),
-        buf_(other.buf_)
-    {}
+    std::unique_ptr<char []> buf_;
+#if 0
+    GZFP(GZFP &&other)
+    {
+        using std::swap;
+        swap(*this, other);
+    }
+#endif
     void set_bufsz(unsigned bufsz) {
 #if ZLIB_VERNUM < 0x1235
         std::fprintf(stderr, "Warning: gzbuffer added in zlib1.2.3.5. Unable to change "
@@ -70,7 +70,7 @@ public:
         va_end(args);
     }
     char *next() {
-        return gzgets(fp_, buf_, linesz_);
+        return gzgets(fp_, buf_.get(), linesz_);
     }
     std::uint8_t infer_level(const char *s) const {
 #if !NDEBUG
@@ -102,7 +102,7 @@ public:
         is_write_(strchr(mode, 'w')),
         level_(infer_level(mode)),
         linesz_(is_write_ ? 0: linesz),
-        buf_((char *)malloc(linesz))
+        buf_(std::make_unique<char []>(linesz))
     {
     }
     GZFP(const char *path, const char *mode, int linesz=2048): GZFP(open_gzfile(path, mode), mode, linesz) {} // File path
@@ -111,7 +111,6 @@ public:
     GZFP(const char *path): GZFP(path, "r") {}
     ~GZFP() {
         if(fp_) gzclose(fp_);
-        if(buf_) free(buf_);
     }
 };
 

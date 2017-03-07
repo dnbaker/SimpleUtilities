@@ -13,7 +13,7 @@ OS:=$(shell uname)
 ifeq ($(OS),Darwin)
     OPT := $(OPT) -Wa,-q
 endif
-CXXFLAGS=$(OPT) -std=c++11 $(WARNINGS)
+CXXFLAGS=$(OPT) -std=c++14 $(WARNINGS)
 LIB=-lz -pthread
 LD=-L.
 INCLUDE=-I.
