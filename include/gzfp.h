@@ -93,7 +93,7 @@ public:
         is_write_(0),
         level_(0),
         linesz_(0),
-        buf_(0)
+        buf_(nullptr)
     {
     }
     GZFP(gzFile fp, const char *mode, int linesz=2048):
