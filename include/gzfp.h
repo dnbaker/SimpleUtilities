@@ -35,7 +35,7 @@ struct GZFP {
     gzFile fp_;
 public:
     ssize_t linelen_;
-    const std::uint8_t is_write_;
+    const bool is_write_;
     const std::uint8_t level_;
     int linesz_;
     char *buf_;
@@ -72,14 +72,6 @@ public:
     char *next() {
         return gzgets(fp_, buf_, linesz_);
     }
-    int contains_w(const char *s) {
-#if !NDEBUG
-        const char *w(s);
-#endif
-        while(*s) if(*s++ == 'w') return 1;
-        assert(!strchr(w, 'w'));
-        return 0;
-    }
     std::uint8_t infer_level(const char *s) const {
 #if !NDEBUG
         const char *original_str(s);
@@ -107,7 +99,7 @@ public:
     GZFP(int fd, const char *mode, int linesz=2048): //File descriptor constructor.
         fp_(gzdopen(fd, mode)),
         linelen_(0L),
-        is_write_(contains_w(mode)),
+        is_write_(strchr(mode, 'w')),
         level_(infer_level(mode)),
         linesz_(is_write_ ? 0: linesz),
         buf_((char *)malloc(linesz))
@@ -119,7 +111,7 @@ public:
     GZFP(const char *path, const char *mode, int linesz=2048):
         fp_(open_gzfile(path, mode)),
         linelen_(0L),
-        is_write_(contains_w(mode)),
+        is_write_(strchr(mode, 'w')),
         level_(infer_level(mode)),
         linesz_(is_write_ ? 0: linesz),
         buf_((char *)malloc(linesz))
