@@ -55,6 +55,9 @@ public:
         gzbuffer(fp_, bufsz);
 #endif
     }
+    int getc() {
+        return gzgetc(fp_);
+    }
     void write(const char c) {
         assert(is_write_);
         gzputc(fp_, c);
