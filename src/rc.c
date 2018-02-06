@@ -40,7 +40,7 @@ int main(int argc, char *argv[]) {
             fputc('\n', stdout);
             fflush(stdout);
             write(STDOUT_FILENO, ks->seq.s, ks->seq.l);
-            write(STDOUT_FILENO, "\n", 1);
+            write(STDOUT_FILENO, "\n+\n", 3);
             write(STDOUT_FILENO, ks->qual.s, ks->qual.l);
             write(STDOUT_FILENO, "\n", 1);
         } else {
