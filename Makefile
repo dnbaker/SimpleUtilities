@@ -27,6 +27,9 @@ all: $(EX)
 %: src/%.cpp klib/kstring.o
 	$(CXX) $(CXXFLAGS) $(INCLUDE) $(LD) klib/kstring.o $< -o $@ $(LIB)
 
+%: src/%.c klib/kstring.o
+	$(CC) $(CFLAGS) $(INCLUDE) $(LD) klib/kstring.o $< -o $@ $(LIB)
+
 clean:
 	rm -f $(OBJ) $(EX) || echo "EX is $(EX)" 
 	&& cd hll && make clean && cd ..
