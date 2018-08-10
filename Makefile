@@ -27,6 +27,9 @@ all: $(EX)
 %: src/%.cpp klib/kstring.o
 	$(CXX) $(CXXFLAGS) $(INCLUDE) $(LD) klib/kstring.o $< -o $@ $(LIB)
 
+s%: src/%.cpp klib/kstring.o
+	$(CXX) $(CXXFLAGS) $(INCLUDE) $(LD) -fsanitize=undefined -fsanitize=address -fsanitize=leak klib/kstring.o $< -o $@ $(LIB)
+
 %: src/%.c klib/kstring.o
 	$(CC) $(CFLAGS) $(INCLUDE) $(LD) klib/kstring.o $< -o $@ $(LIB)
 
