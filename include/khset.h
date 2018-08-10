@@ -33,12 +33,14 @@ using u64 = ::std::uint64_t;
     t(const t &other) {\
         if(other.size()) {\
             std::memcpy(this, &other, sizeof(*this));\
-            keys = static_cast<decltype(keys)>(std::malloc(other.size() * sizeof(u32)));\
+            auto memsz = other.size() * sizeof(*keys);\
+            keys = static_cast<decltype(keys)>(std::malloc(memsz));\
             if(!keys) throw std::bad_alloc();\
-            std::memcpy(keys, other.keys, other.size() * sizeof(*keys));\
-            flags = static_cast<u32 *>(std::malloc(__ac_fsize(other.size()) * sizeof(u32)));\
+            std::memcpy(keys, other.keys, memsz);\
+            memsz = __ac_fsize(other.size()) * sizeof(u32);\
+            flags = static_cast<u32 *>(std::malloc(memsz));\
             if(!flags) throw std::bad_alloc();\
-            std::memcpy(flags, other.flags, __ac_fsize(other.size()) * sizeof(u32));\
+            std::memcpy(flags, other.flags, memsz);\
         } else std::memset(this, 0, sizeof(*this));\
     }
 
@@ -58,7 +60,9 @@ struct khset32_t: khash_t(set) {
     const khash_t(set) *operator->() const {return static_cast<const khash_t(set) *>(*this);}
     auto insert(u32 val) {
         int khr;
-        return kh_put(set, this, val, &khr);
+        auto ret = kh_put(set64, *this, val, &khr);
+        if(khr < 0) throw std::bad_alloc();
+        return ret;
     }
     template<typename ItType>
     void insert(ItType i1, ItType i2) {
@@ -84,12 +88,18 @@ struct khset64_t: khash_t(set64) {
     const khash_t(set64) *operator->() const {return static_cast<const khash_t(set64) *>(*this);}
     auto insert(u64 val) {
         int khr;
-        return kh_put(set64, *this, val, &khr);
+        auto ret = kh_put(set64, *this, val, &khr);
+        if(khr < 0) throw std::bad_alloc();
+        return ret;
     }
     void clear() {kh_clear(set64, this);}
     bool contains(u64 x) const {return kh_get(set64, this, x) != kh_end(this);}
     size_t size() const {return kh_size(static_cast<const khash_t(set64) *>(this));}
 };
+template<typename T> T&operator+=(T &a, const T &b) {
+    b.for_each([&](auto k){a.insert(k);});
+    return a;
+}
 #undef __FE__
 #undef COPY_DEC
 #undef MOVE_DEC
