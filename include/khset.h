@@ -60,7 +60,7 @@ struct khset32_t: khash_t(set) {
     const khash_t(set) *operator->() const {return static_cast<const khash_t(set) *>(*this);}
     auto insert(u32 val) {
         int khr;
-        auto ret = kh_put(set64, *this, val, &khr);
+        auto ret = kh_put(set, *this, val, &khr);
         if(khr < 0) throw std::bad_alloc();
         return ret;
     }

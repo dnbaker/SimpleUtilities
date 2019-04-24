@@ -8,7 +8,7 @@ WARNINGS=-Wall -Wextra -Wno-char-subscripts \
 DBG= -DNDEBUG # -fno-inline
 
 OPT= $(DBG) -O3 -funroll-loops \
-			-pipe -fno-strict-aliasing -march=native # -flto#  -mavx512f # -msse2
+			-pipe -fno-strict-aliasing -march=native -DMAIN_FN # -flto#  -mavx512f # -msse2
 OS:=$(shell uname)
 ifeq ($(OS),Darwin)
     OPT := $(OPT) -Wa,-q
